@@ -1,2 +1,140 @@
 <!DOCTYPE html>
-<html><body>Hello, world!</body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Harris Family Hub</title>
+  <link rel="icon" type="image/png" href="family.png">
+  <script src="weather_config.js"></script>
+  <script src="photo_config.js"></script>
+  <script src="bin_config.js"></script>
+  <script src="calendar_config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+    }
+    header {
+      background: #4469af;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .section {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      min-height: 320px;
+      overflow: hidden;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .photos {
+      display: flex;
+      overflow-x: auto;
+      gap: 1rem;
+    }
+    .photos img {
+      border-radius: 8px;
+      max-height: 200px;
+    }
+    .forecast {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 0.75rem;
+    }
+    .forecast-day {
+      background: #eef2f5;
+      padding: 0.75rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .forecast-day img {
+      width: 42px;
+      height: 42px;
+    }
+    .bin-event {
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .bin-event img {
+      width: 48px;
+      height: 48px;
+    }
+    .brown { border-left: 5px solid #8b5e3c; background: #f3e8da; }
+    .green { border-left: 5px solid #3a773a; background: #e4f5e4; }
+    .black { border-left: 5px solid #444; background: #eeeeee; }
+    .bin-date { font-weight: 600; font-size: 1.1rem; margin-bottom: 0.3rem; }
+    .summary { text-transform: capitalize; margin-bottom: 0.5rem; }
+    .next-alert {
+      background: #fffbcc;
+      padding: 1rem;
+      border: 1px solid #f2e394;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      text-align: center;
+    }
+    iframe.calendar {
+      width: 100%;
+      height: 100%;
+      border: none;
+      min-height: 280px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Harris Family Hub</h1>
+  </header>
+
+  <div class="grid-container">
+    <div class="section" style="grid-column: 1 / 2;">
+      <h2>🗓️ Family Calendar</h2>
+      <iframe class="calendar" id="calendar-frame"></iframe>
+    </div>
+
+    <div class="section" style="grid-column: 2 / 3;">
+      <h2>🗑️ Bin Collection</h2>
+      <div id="next-alert" class="next-alert">Loading next collection...</div>
+      <div id="bin-container">Loading...</div>
+    </div>
+
+    <div class="section" style="grid-column: 1 / 2;">
+      <h2>📸 Family Photos</h2>
+      <div class="photos" id="photo-carousel">Loading...</div>
+    </div>
+
+    <div class="section" style="grid-column: 2 / 3;">
+      <h2>🌦️ 7-Day Weather Forecast (PE6 7LT)</h2>
+      <div class="forecast" id="weather-forecast">Loading forecast...</div>
+    </div>
+  </div>
+
+<script>
+  // Inject Google Calendar iframe src from calendar_config.js
+  const calendarFrame = document.getElementById("calendar-frame");
+  calendarFrame.src = `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(calendarConfig.calendarId)}&ctz=${encodeURIComponent(calendarConfig.timezone)}`;
+</script>
+</body>
+</html>
