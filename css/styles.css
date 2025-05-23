@@ -40,3 +40,37 @@ h2 { margin-top: 0; }
 .black{border-left:5px solid #444;background:#eee;}
 .brown{border-left:5px solid #8b5e3c;background:#f3e8da;}
 .next-alert{background:#fffbcc;border:1px solid #f2e394;border-radius:6px;padding:1rem;font-weight:bold;text-align:center;}
+
+
+.bin-event {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+}
+
+.bin-event img {
+  width: 48px;
+  height: 48px;
+}
+
+.bin-date {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.green {
+  background-color: #e6f4e6;
+}
+
+.black {
+  background-color: #eeeeee;
+}
+
+.brown {
+  background-color: #f4ead6;
+}
