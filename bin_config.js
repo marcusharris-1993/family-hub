@@ -5,7 +5,7 @@ const binConfig = {
     black: "black_bin.png",
     brown: "brown_bin.png"
   },
-  icsText: `
+  icsContent: `
 BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
