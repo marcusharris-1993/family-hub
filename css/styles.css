@@ -74,3 +74,19 @@ h2 { margin-top: 0; }
 .brown {
   background-color: #f4ead6;
 }
+
+.next-alert {
+  background: #fff9c4;
+  border: 1px solid #f0e68c;
+  padding: 0.75rem;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.bin-date {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+}
