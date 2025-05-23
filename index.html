@@ -5,35 +5,49 @@
   <title>Harris Family Hub</title>
   <link rel="icon" type="image/png" href="assets/family.png" />
 
+  <!-- CONFIG FILES -->
   <script src="bin_config.js"></script>
   <script src="calendar_config.js"></script>
   <script src="weather_config.js"></script>
   <script src="photo_config.js"></script>
 
+  <!-- LIBRARIES -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.min.js"></script>
+
+  <!-- STYLES -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <header><h1>Harris Family Hub</h1></header>
+  <header><h1 style="text-align:center;">Harris Family Hub</h1></header>
+
   <div class="grid">
-    <div class="card">
-      <h2>Family Calendar</h2>
-      <iframe id="calendar" class="calendar" loading="lazy"></iframe>
+    <!--  CALENDAR  -->
+    <div class="card calendar-card">
+      <h2 style="text-align:center;">Family Calendar</h2>
+      <iframe id="calendar" class="calendar" style="width: 100%; height: 100%; border: none;" loading="lazy"></iframe>
     </div>
+
+    <!--  BIN COLLECTION  -->
     <div class="card">
-      <h2>Bin Collection</h2>
+      <h2 style="text-align:center;">Bin Collection</h2>
       <div id="next-alert" class="next-alert"></div>
       <div id="bin-container">Loading…</div>
     </div>
+
+    <!--  PHOTO GALLERY  -->
     <div class="card">
-      <h2>Family Photos</h2>
+      <h2 style="text-align:center;">Family Photos</h2>
       <div id="photo-carousel" class="photos">Loading…</div>
     </div>
+
+    <!--  WEATHER  -->
     <div class="card">
-      <h2>7‑Day Weather Forecast</h2>
+      <h2 style="text-align:center;">7‑Day Weather Forecast</h2>
       <div id="weather-forecast">Loading…</div>
     </div>
   </div>
+
+  <!-- MAIN LOGIC -->
   <script>
     const calFrame = document.getElementById("calendar");
     calFrame.src = calendarConfig.calendarId.includes("https://")
@@ -41,20 +55,22 @@
       : `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(calendarConfig.calendarId)}&ctz=${encodeURIComponent(calendarConfig.timezone)}`;
 
     (() => {
-      renderBins(binConfig.icsText);
+      const icsText = binConfig.icsContent;
+      renderBins(icsText);
 
       function renderBins(icsData) {
         const comp = new ICAL.Component(ICAL.parse(icsData));
         const events = comp.getAllSubcomponents("vevent");
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+
         const list = events.map(ev => {
           const e = new ICAL.Event(ev);
           const d = e.startDate.toJSDate();
           return {
             summary: e.summary.toLowerCase(),
             date: d,
-            formatted: d.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric" }),
+            formatted: d.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric" })
           };
         }).filter(e => e.date >= today)
           .sort((a, b) => a.date - b.date)
@@ -84,7 +100,8 @@
             box.classList.add("brown");
             icon = "assets/" + binConfig.icons.brown;
           }
-          box.innerHTML = `<img src="${icon}" alt="bin"><div><div class='bin-date'>${it.formatted}</div><div class='summary'>${it.summary}</div></div>`;
+          const cleanText = it.summary.replace(/empty bin 240l\s*/i, "");
+          box.innerHTML = `<img src="${icon}" alt="bin"><div><div class='bin-date'>${it.formatted}</div><div class='summary'>${cleanText}</div></div>`;
           listDiv.appendChild(box);
         });
       }
@@ -93,7 +110,7 @@
     (() => {
       const wrap = document.getElementById("photo-carousel");
       wrap.innerHTML = "";
-      photoConfig.photos.forEach((url) => {
+      photoConfig.photos.forEach(url => {
         const img = new Image();
         img.src = url;
         img.alt = "family photo";
