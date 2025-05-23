@@ -100,8 +100,14 @@
             box.classList.add("brown");
             icon = "assets/" + binConfig.icons.brown;
           }
-          const cleanText = it.summary.replace(/empty bin 240l\s*/i, "");
-          box.innerHTML = `<img src="${icon}" alt="bin"><div><div class='bin-date'>${it.formatted}</div><div class='summary'>${cleanText}</div></div>`;
+          const cleanText = it.summary.replace(/empty bin 240l\s*/i, "").replace(/\b\w/g, c => c.toUpperCase()) + " Bin";
+          box.innerHTML = `
+            <img src="${icon}" alt="bin">
+            <div>
+              <div class='bin-date'><strong>${it.formatted}</strong></div>
+              <div class='summary'>${cleanText}</div>
+            </div>
+          `;
           listDiv.appendChild(box);
         });
       }
