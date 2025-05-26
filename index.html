@@ -4,16 +4,22 @@
   <meta charset="UTF-8" />
   <title>Harris Family Hub</title>
   <link rel="icon" type="image/png" href="assets/family.png" />
+
+  <!-- CONFIG FILES -->
   <script src="auth_config.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://apis.google.com/js/api.js"></script>
   <script src="bin_config.js"></script>
   <script src="calendar_config.js"></script>
   <script src="weather_config.js"></script>
   <script src="photo_config.js"></script>
+
+  <!-- LIBRARIES -->
+  <script src="https://apis.google.com/js/api.js" async defer onload="gapiInit()"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.min.js"></script>
+
+  <!-- STYLES -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body onload="gapiInit()">
+<body>
   <header><h1>Harris Family Hub</h1></header>
   <div class="grid">
     <div class="card"><h2>Family Calendar</h2><iframe id="calendar" class="calendar" loading="lazy"></iframe></div>
@@ -21,30 +27,6 @@
     <div class="card"><h2>Family Photos</h2><div id="photo-carousel" class="photos">Loading…</div></div>
     <div class="card"><h2>7‑Day Weather Forecast</h2><div id="weather-forecast">Loading…</div></div>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.min.js"></script>
-  <script>
-    const calFrame = document.getElementById("calendar");
-    calFrame.src = calendarConfig.calendarId.includes("https://")
-      ? calendarConfig.calendarId
-      : \`https://calendar.google.com/calendar/embed?src=\${encodeURIComponent(calendarConfig.calendarId)}&ctz=\${encodeURIComponent(calendarConfig.timezone)}\`;
-
-    function gapiInit() {
-      gapi.load("client:auth2", () => {
-        gapi.client.init({
-          clientId: authConfig.clientId,
-          scope: authConfig.scopes.join(" ")
-        }).then(() => {
-          const auth = gapi.auth2.getAuthInstance();
-          if (!auth.isSignedIn.get()) {
-            auth.signIn();
-          } else {
-            console.log("User signed in");
-          }
-        }).catch((err) => {
-          console.error("GAPI init error:", err);
-        });
-      });
-    }
-  </script>
+  <script src="js/family_hub.js"></script>
 </body>
 </html>
