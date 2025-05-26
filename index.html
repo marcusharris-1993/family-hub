@@ -4,148 +4,47 @@
   <meta charset="UTF-8" />
   <title>Harris Family Hub</title>
   <link rel="icon" type="image/png" href="assets/family.png" />
-
-  <!-- CONFIG FILES -->
+  <script src="auth_config.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://apis.google.com/js/api.js"></script>
   <script src="bin_config.js"></script>
   <script src="calendar_config.js"></script>
   <script src="weather_config.js"></script>
   <script src="photo_config.js"></script>
-
-  <!-- LIBRARIES -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.min.js"></script>
-
-  <!-- STYLES -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body>
-  <header><h1 style="text-align:center;">Harris Family Hub</h1></header>
-
+<body onload="gapiInit()">
+  <header><h1>Harris Family Hub</h1></header>
   <div class="grid">
-    <!--  CALENDAR  -->
-    <div class="card calendar-card">
-      <h2 style="text-align:center;">Family Calendar</h2>
-      <iframe id="calendar" class="calendar" style="width: 100%; height: 100%; border: none;" loading="lazy"></iframe>
-    </div>
-
-    <!--  BIN COLLECTION  -->
-    <div class="card">
-      <h2 style="text-align:center;">Bin Collection Schedule</h2>
-      <div id="next-alert" class="next-alert"></div>
-      <div id="bin-container">Loading…</div>
-    </div>
-
-    <!--  PHOTO GALLERY  -->
-    <div class="card">
-      <h2 style="text-align:center;">Family Photos</h2>
-      <div id="photo-carousel" class="photos">Loading…</div>
-    </div>
-
-    <!--  WEATHER  -->
-    <div class="card">
-      <h2 style="text-align:center;">7‑Day Weather Forecast</h2>
-      <div id="weather-forecast">Loading…</div>
-    </div>
+    <div class="card"><h2>Family Calendar</h2><iframe id="calendar" class="calendar" loading="lazy"></iframe></div>
+    <div class="card"><h2>Bin Collection</h2><div id="next-alert" class="next-alert"></div><div id="bin-container">Loading…</div></div>
+    <div class="card"><h2>Family Photos</h2><div id="photo-carousel" class="photos">Loading…</div></div>
+    <div class="card"><h2>7‑Day Weather Forecast</h2><div id="weather-forecast">Loading…</div></div>
   </div>
-
-  <!-- MAIN LOGIC -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.4.0/ical.min.js"></script>
   <script>
     const calFrame = document.getElementById("calendar");
     calFrame.src = calendarConfig.calendarId.includes("https://")
       ? calendarConfig.calendarId
-      : `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(calendarConfig.calendarId)}&ctz=${encodeURIComponent(calendarConfig.timezone)}`;
+      : \`https://calendar.google.com/calendar/embed?src=\${encodeURIComponent(calendarConfig.calendarId)}&ctz=\${encodeURIComponent(calendarConfig.timezone)}\`;
 
-    (() => {
-      const icsText = binConfig.icsContent;
-      renderBins(icsText);
-
-      function renderBins(icsData) {
-        const comp = new ICAL.Component(ICAL.parse(icsData));
-        const events = comp.getAllSubcomponents("vevent");
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const list = events.map(ev => {
-          const e = new ICAL.Event(ev);
-          const d = e.startDate.toJSDate();
-          return {
-            summary: e.summary.toLowerCase(),
-            date: d,
-            formatted: d.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric" })
-          };
-        }).filter(e => e.date >= today)
-          .sort((a, b) => a.date - b.date)
-          .slice(0, binConfig.maxUpcoming);
-
-        const alert = document.getElementById("next-alert");
-        const listDiv = document.getElementById("bin-container");
-        listDiv.innerHTML = "";
-
-        if (list.length) {
-          const n = list[0];
-          const nice = n.summary.replace(/empty bin 240l\s*/i, "").replace(/\b\w/g, c => c.toUpperCase());
-          alert.textContent = `Next collection: ${n.formatted} (${nice})`;
-        }
-
-        list.forEach(it => {
-          const box = document.createElement("div");
-          box.className = "bin-event";
-          let icon = "";
-          if (it.summary.includes("green")) {
-            box.classList.add("green");
-            icon = "assets/" + binConfig.icons.green;
-          } else if (it.summary.includes("black")) {
-            box.classList.add("black");
-            icon = "assets/" + binConfig.icons.black;
-          } else if (it.summary.includes("brown")) {
-            box.classList.add("brown");
-            icon = "assets/" + binConfig.icons.brown;
+    function gapiInit() {
+      gapi.load("client:auth2", () => {
+        gapi.client.init({
+          clientId: authConfig.clientId,
+          scope: authConfig.scopes.join(" ")
+        }).then(() => {
+          const auth = gapi.auth2.getAuthInstance();
+          if (!auth.isSignedIn.get()) {
+            auth.signIn();
+          } else {
+            console.log("User signed in");
           }
-          const cleanText = it.summary.replace(/empty bin 240l\s*/i, "").replace(/\b\w/g, c => c.toUpperCase()) + " Bin";
-          box.innerHTML = `
-            <img src="${icon}" alt="bin">
-            <div>
-              <div class='bin-date'><strong>${it.formatted}</strong></div>
-              <div class='summary'>${cleanText}</div>
-            </div>
-          `;
-          listDiv.appendChild(box);
+        }).catch((err) => {
+          console.error("GAPI init error:", err);
         });
-      }
-    })();
-
-    (() => {
-      const wrap = document.getElementById("photo-carousel");
-      wrap.innerHTML = "";
-      photoConfig.photos.forEach(url => {
-        const img = new Image();
-        img.src = url;
-        img.alt = "family photo";
-        wrap.appendChild(img);
       });
-    })();
-
-    (() => {
-      const out = document.getElementById("weather-forecast");
-      fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${weatherConfig.postcode},GB&units=metric&appid=${weatherConfig.apiKey}`)
-        .then(r => r.json())
-        .then(data => {
-          const map = new Map();
-          data.list.forEach(e => {
-            const d = new Date(e.dt * 1000);
-            const key = d.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short" });
-            if (!map.has(key)) map.set(key, e);
-          });
-          out.innerHTML = "";
-          [...map.values()].slice(0, 7).forEach(d => {
-            const date = new Date(d.dt * 1000);
-            const div = document.createElement("div");
-            div.className = "forecast-day";
-            div.innerHTML = `<strong>${date.toLocaleDateString("en-GB", { weekday: "short" })}</strong><img src='https://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png'><div>${Math.round(d.main.temp)}°C</div>`;
-            out.appendChild(div);
-          });
-        })
-        .catch(() => (out.textContent = "Weather unavailable"));
-    })();
+    }
   </script>
 </body>
 </html>

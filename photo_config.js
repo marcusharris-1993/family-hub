@@ -1,5 +1,7 @@
 const photoConfig = {
   photos: [
-    "https://drive.google.com/uc?export=view&id=1YXfkt2DF3B0CXepNWteNN7iZ5j0bWSs9"
+    "https://drive.google.com/uc?id=IMAGE_ID_1",
+    "https://drive.google.com/uc?id=IMAGE_ID_2",
+    "https://drive.google.com/uc?id=IMAGE_ID_3"
   ]
 };
