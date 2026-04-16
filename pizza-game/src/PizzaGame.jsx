@@ -44,11 +44,12 @@ const CUSTOMERS = [
 const NW = ['zero','one','two','three','four','five'];
 const P  = {ORDER:'ORDER',BUILD:'BUILD',BAKING:'BAKING',DRINK:'DRINK',BLENDING:'BLENDING',RESULT:'RESULT'};
 
-// ── CSS ──────────────────────────────────────────────────────────────────────
+// ── CSS ───────────────────────────────────────────────────────────────────────
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
 .pg*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 .pg{font-family:'Nunito',sans-serif;touch-action:pan-y}
+
 @keyframes custIn{from{transform:translateX(-150px) scale(.8);opacity:0}to{transform:none;opacity:1}}
 @keyframes speechIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes trayUp{from{transform:translateY(70px);opacity:0}to{transform:none;opacity:1}}
@@ -71,15 +72,45 @@ const CSS = `
 @keyframes orbit{from{transform:rotate(0deg) translateX(54px) rotate(0deg)}to{transform:rotate(360deg) translateX(54px) rotate(-360deg)}}
 @keyframes dSlide{from{transform:translateX(80px);opacity:0}to{transform:none;opacity:1}}
 @keyframes sPop{0%{transform:scale(0) rotate(-30deg);opacity:0}70%{transform:scale(1.35) rotate(10deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes wrongWiggle{0%,100%{transform:translate(-50%,-50%)}25%{transform:translate(-50%,-50%) rotate(-12deg)}75%{transform:translate(-50%,-50%) rotate(12deg)}}
+
 .pg .glass{background:rgba(255,255,255,.10);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:24px;box-shadow:0 8px 32px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18)}
 .pg .btn{font-family:'Nunito',sans-serif;font-weight:900;border:none;cursor:pointer;border-radius:50px;padding:14px 28px;font-size:18px;border-bottom:4px solid rgba(0,0,0,.3);display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s,border-bottom-width .08s,margin-top .08s;user-select:none;width:100%}
 .pg .btn:active{transform:scale(.94);border-bottom-width:1px;margin-top:3px}
 .pg .btn-r{background:linear-gradient(135deg,#ff6b6b,#ee5a24);color:#fff;box-shadow:0 4px 20px rgba(238,90,36,.4)}
 .pg .btn-g{background:linear-gradient(135deg,#6bcb77,#4c9a52);color:#fff;box-shadow:0 4px 20px rgba(76,154,82,.4)}
 .pg .btn-p{background:linear-gradient(135deg,#a66cff,#7b2fff);color:#fff;box-shadow:0 4px 20px rgba(123,47,255,.4)}
-.pg .ib{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.2);border-radius:16px;padding:10px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:'Nunito',sans-serif;touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .1s,background .15s}
+.pg .ib{background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.18);border-radius:14px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Nunito',sans-serif;touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .1s,background .15s;min-height:64px;justify-content:center}
 .pg .ib:active{transform:scale(.92);background:rgba(255,255,255,.25)}
-.pg .fl{color:#ff9f43;font-size:1.25em;text-shadow:0 0 10px rgba(255,159,67,.7);font-weight:900}
+.pg .ib-want{border-color:#ffd700 !important;box-shadow:0 0 10px rgba(255,215,0,.55),0 0 0 1px rgba(255,215,0,.3);background:rgba(255,215,0,.12) !important}
+.pg .fl{color:#ff9f43;font-size:1.2em;text-shadow:0 0 10px rgba(255,159,67,.7);font-weight:900}
+
+/* ── Phone layout (default) ── */
+.pg .build-wrap{display:flex;flex-direction:column;gap:12px}
+.pg .build-pizza{order:2;display:flex;flex-direction:column;align-items:center;gap:8px}
+.pg .build-side{order:1;display:flex;flex-direction:column;gap:10px}
+.pg .piz-sz{width:170px;height:170px;flex-shrink:0}
+.pg .t-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.pg .drink-wrap{display:flex;flex-direction:column;gap:12px}
+.pg .drink-blender{order:2;display:flex;flex-direction:column;align-items:center;gap:8px}
+.pg .drink-side{order:1;display:flex;flex-direction:column;gap:10px}
+.pg .narrow{max-width:520px;margin:0 auto;width:100%}
+
+/* ── Tablet landscape ── */
+@media(min-width:768px) and (orientation:landscape){
+  .pg{height:100dvh;overflow:hidden}
+  .pg main{overflow:hidden !important;max-width:none !important}
+  .pg .build-wrap{display:grid;grid-template-columns:210px 1fr;gap:16px;height:calc(100dvh - 76px);align-items:start}
+  .pg .build-pizza{order:0;position:sticky;top:0;padding-top:4px}
+  .pg .build-side{order:0;overflow-y:auto;max-height:calc(100dvh - 80px);padding-right:4px}
+  .pg .piz-sz{width:196px;height:196px}
+  .pg .t-grid{grid-template-columns:repeat(6,1fr);gap:6px}
+  .pg .drink-wrap{display:grid;grid-template-columns:160px 1fr;gap:16px;height:calc(100dvh - 76px);align-items:start}
+  .pg .drink-blender{order:0;position:sticky;top:0;padding-top:4px}
+  .pg .drink-side{order:0;overflow-y:auto;max-height:calc(100dvh - 80px)}
+  .pg .narrow{max-width:600px}
+  .pg .baking-wrap{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:40px}
+}
 `;
 
 // ── Audio ─────────────────────────────────────────────────────────────────────
@@ -95,24 +126,24 @@ function tone(ctx, freq, dur, type='sine', vol=0.28) {
   } catch(_){}
 }
 const sfx = {
-  pop:    c => tone(c,660,.10),
-  rm:     c => tone(c,300,.14),
-  ok:     c => [523,659,784].forEach((f,i)=>setTimeout(()=>tone(c,f,.3),i*140)),
-  fail:   c => [400,300,200].forEach((f,i)=>setTimeout(()=>tone(c,f,.3),i*140)),
-  win:    c => [523,587,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(c,f,.4,'sine',.35),i*180)),
-  blend: (c,dur) => {
+  pop:   c => tone(c,660,.10),
+  rm:    c => tone(c,300,.14),
+  wrong: c => tone(c,220,.18,'sawtooth',.15),
+  ok:    c => [523,659,784].forEach((f,i)=>setTimeout(()=>tone(c,f,.3),i*140)),
+  fail:  c => [400,300,200].forEach((f,i)=>setTimeout(()=>tone(c,f,.3),i*140)),
+  win:   c => [523,587,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(c,f,.4,'sine',.35),i*180)),
+  blend:(c,dur)=>{
     if(!c) return;
-    try {
+    try{
       const o=c.createOscillator(),g=c.createGain();
-      o.connect(g); g.connect(c.destination);
-      o.type='sawtooth';
+      o.connect(g); g.connect(c.destination); o.type='sawtooth';
       o.frequency.setValueAtTime(200,c.currentTime);
       o.frequency.linearRampToValueAtTime(500,c.currentTime+dur);
       g.gain.setValueAtTime(0.08,c.currentTime);
       g.gain.linearRampToValueAtTime(0.12,c.currentTime+dur*.5);
       g.gain.linearRampToValueAtTime(0,c.currentTime+dur);
       o.start(); o.stop(c.currentTime+dur);
-    } catch(_){}
+    }catch(_){}
   },
 };
 
@@ -125,21 +156,36 @@ function mkOrder() {
   const customer = CUSTOMERS[Math.floor(Math.random()*CUSTOMERS.length)];
   return {toppings:tops, drink, customer};
 }
-function calcStars(order, pTops, bFruits) {
-  const off = order.toppings.reduce((s,t)=>s+Math.abs((pTops[t.id]||0)-t.required),0);
-  const ps  = off===0?3:off===1?2:1;
-  const dok = order.drink.ingredients.every(i=>(bFruits[i.id]||0)===i.count);
+
+function calcStars(order, pTops, bFrts) {
+  const orderedIds = new Set(order.toppings.map(t=>t.id));
+  // Ordered toppings: penalise shortfall and excess per item
+  const orderedOff = order.toppings.reduce((s,t)=>s+Math.abs((pTops[t.id]||0)-t.required), 0);
+  // Wrong toppings added (not in order)
+  const wrongTops  = Object.entries(pTops)
+    .filter(([id])=>!orderedIds.has(id))
+    .reduce((s,[,c])=>s+c, 0);
+  const totalOff   = orderedOff + wrongTops;
+  const ps         = totalOff===0 ? 3 : totalOff<=1 ? 2 : 1;
+
+  const drinkIds   = new Set(order.drink.ingredients.map(i=>i.id));
+  const wrongFrts  = Object.entries(bFrts)
+    .filter(([id])=>!drinkIds.has(id))
+    .reduce((s,[,c])=>s+c, 0);
+  const dok        = order.drink.ingredients.every(i=>(bFrts[i.id]||0)===i.count) && wrongFrts===0;
   return {ps, db:dok?1:0, total:ps+(dok?1:0)};
 }
+
 function tPos(id, idx, cnt) {
   const seed  = (id.charCodeAt(0)*13 + id.charCodeAt(1)*7) % 360;
   const angle = ((seed + idx*(360/Math.max(cnt,1)))*Math.PI)/180;
-  const r     = 40+(id.charCodeAt(0)%22);
+  const r     = 38+(id.charCodeAt(0)%20);
   return {x:Math.cos(angle)*r, y:Math.sin(angle)*r};
 }
-function PName({name}) {
+function PName({name, small}) {
+  const sz = small ? 11 : 12;
   return (
-    <span style={{color:'white',fontWeight:700,fontSize:13,textAlign:'center'}}>
+    <span style={{color:'white',fontWeight:700,fontSize:sz,textAlign:'center',lineHeight:1.2}}>
       <span className="fl">{name[0]}</span>{name.slice(1)}
     </span>
   );
@@ -147,22 +193,23 @@ function PName({name}) {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function PizzaGame() {
-  const [phase,  setPhase]  = useState(P.ORDER);
-  const [order,  setOrder]  = useState(()=>mkOrder());
-  const [score,  setScore]  = useState(0);
-  const [pTops,  setPTops]  = useState({});
-  const [bFrts,  setBFrts]  = useState({});
-  const [bkPhase,setBkPhase]= useState('idle');
-  const [bkPct,  setBkPct]  = useState(0);
-  const [blPhase,setBlPhase]= useState('idle');
-  const [result, setResult] = useState(null);
-  const [dropEm, setDropEm] = useState(null);
-  const [confetti,setConf]  = useState([]);
+  const [phase,   setPhase]  = useState(P.ORDER);
+  const [order,   setOrder]  = useState(()=>mkOrder());
+  const [score,   setScore]  = useState(0);
+  const [pTops,   setPTops]  = useState({});
+  const [bFrts,   setBFrts]  = useState({});
+  const [bkPhase, setBkPhase]= useState('idle');
+  const [bkPct,   setBkPct]  = useState(0);
+  const [blPhase, setBlPhase]= useState('idle');
+  const [result,  setResult] = useState(null);
+  const [dropEm,  setDropEm] = useState(null);
+  const [confetti,setConf]   = useState([]);
+  const [wrongId, setWrongId]= useState(null);
 
-  const audRef  = useRef(null);
-  const pizRef  = useRef(null);
-  const blnRef  = useRef(null);
-  const ivRef   = useRef(null);
+  const audRef = useRef(null);
+  const pizRef = useRef(null);
+  const blnRef = useRef(null);
+  const ivRef  = useRef(null);
 
   const getAud = useCallback(()=>{
     if(!audRef.current){
@@ -181,11 +228,7 @@ export default function PizzaGame() {
       let p=0;
       ivRef.current=setInterval(()=>{
         p+=2; setBkPct(Math.min(100,p));
-        if(p>=100){
-          clearInterval(ivRef.current);
-          setBkPhase('out');
-          setTimeout(()=>{ setBkPhase('done'); setPhase(P.DRINK); },900);
-        }
+        if(p>=100){ clearInterval(ivRef.current); setBkPhase('out'); setTimeout(()=>{ setBkPhase('done'); setPhase(P.DRINK); },900); }
       },60);
     },900);
     return ()=>{ clearTimeout(t); clearInterval(ivRef.current); };
@@ -194,12 +237,24 @@ export default function PizzaGame() {
   function newRound(){
     setOrder(mkOrder()); setPTops({}); setBFrts({});
     setBkPhase('idle'); setBkPct(0); setBlPhase('idle');
-    setResult(null); setConf([]); setPhase(P.ORDER);
+    setResult(null); setConf([]); setWrongId(null); setPhase(P.ORDER);
   }
 
+  const orderedIds = new Set((order?.toppings||[]).map(t=>t.id));
+  const drinkIds   = new Set((order?.drink?.ingredients||[]).map(i=>i.id));
+
   const addTop = useCallback(t=>{
-    sfx.pop(getAud()); setPTops(p=>({...p,[t.id]:(p[t.id]||0)+1}));
-  },[getAud]);
+    getAud();
+    if(!orderedIds.has(t.id)){
+      sfx.wrong(audRef.current);
+      setWrongId(t.id);
+      setTimeout(()=>setWrongId(null), 600);
+    } else {
+      sfx.pop(audRef.current);
+    }
+    setPTops(p=>({...p,[t.id]:(p[t.id]||0)+1}));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[order]);
 
   const rmTop = useCallback(id=>{
     sfx.rm(getAud());
@@ -207,8 +262,22 @@ export default function PizzaGame() {
   },[getAud]);
 
   const addFrt = useCallback(f=>{
-    sfx.pop(getAud()); setBFrts(p=>({...p,[f.id]:(p[f.id]||0)+1}));
+    getAud();
+    if(!drinkIds.has(f.id)){
+      sfx.wrong(audRef.current);
+      setWrongId('frt_'+f.id);
+      setTimeout(()=>setWrongId(null), 600);
+    } else {
+      sfx.pop(audRef.current);
+    }
+    setBFrts(p=>({...p,[f.id]:(p[f.id]||0)+1}));
     setDropEm(f.emoji); setTimeout(()=>setDropEm(null),600);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[order]);
+
+  const rmFrt = useCallback(id=>{
+    sfx.rm(getAud());
+    setBFrts(p=>{ if(!p[id]) return p; const n={...p}; n[id]===1?delete n[id]:n[id]--; return n; });
   },[getAud]);
 
   function doBlend(){
@@ -234,7 +303,7 @@ export default function PizzaGame() {
     e.preventDefault(); getAud();
     const g=document.createElement('div');
     g.style.cssText=`position:fixed;pointer-events:none;z-index:9999;display:flex;flex-direction:column;align-items:center;gap:4px;left:${e.clientX}px;top:${e.clientY}px;transform:translate(-50%,-50%);filter:drop-shadow(0 6px 12px rgba(0,0,0,.55))`;
-    g.innerHTML=`<div style="font-size:52px">${item.emoji}</div><div style="background:rgba(0,0,0,.8);color:#fff;padding:4px 12px;border-radius:20px;font:900 17px 'Nunito',sans-serif">${item.name}</div>`;
+    g.innerHTML=`<div style="font-size:48px">${item.emoji}</div><div style="background:rgba(0,0,0,.8);color:#fff;padding:4px 12px;border-radius:20px;font:900 16px 'Nunito',sans-serif">${item.name}</div>`;
     document.body.appendChild(g);
     e.currentTarget.setPointerCapture(e.pointerId);
     const mv=m=>{ g.style.left=m.clientX+'px'; g.style.top=m.clientY+'px'; };
@@ -244,7 +313,7 @@ export default function PizzaGame() {
       if(g.parentNode) g.parentNode.removeChild(g);
       if(targetRef.current){
         const r=targetRef.current.getBoundingClientRect();
-        if(u.clientX>=r.left&&u.clientX<=r.right&&u.clientY>=r.top&&u.clientY<=r.bottom){ onDrop(item); }
+        if(u.clientX>=r.left&&u.clientX<=r.right&&u.clientY>=r.top&&u.clientY<=r.bottom) onDrop(item);
       }
     };
     document.addEventListener('pointermove',mv);
@@ -255,270 +324,329 @@ export default function PizzaGame() {
   const blFList  = Object.entries(bFrts).flatMap(([id,c])=>Array(c).fill(id));
   const blFill   = Math.min(88,blFList.length*22);
 
-  // ── render: ORDER ────────────────────────────────────────────────────────────
+  // ── ORDER ────────────────────────────────────────────────────────────────────
   function renderOrder(){
     return (
-      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:20}}>
-        <div style={{fontSize:88,animation:'custIn .55s ease both,bob 3s ease-in-out 1s infinite',marginTop:8}}>
+      <div className="narrow" style={{display:'flex',flexDirection:'column',alignItems:'center',gap:16,paddingTop:4}}>
+        <div style={{fontSize:80,animation:'custIn .55s ease both, bob 3s ease-in-out 1s infinite'}}>
           {order.customer.emoji}
         </div>
-        <div className="glass" style={{width:'100%',padding:'20px 18px',animation:'speechIn .4s .3s ease both',position:'relative'}}>
-          <div style={{position:'absolute',top:-22,left:'50%',transform:'translateX(-50%)',fontSize:28}}>💬</div>
-          <h2 style={{color:'#ffd700',fontWeight:900,fontSize:20,marginBottom:14,textAlign:'center'}}>
+        <div className="glass" style={{width:'100%',padding:'18px 16px',animation:'speechIn .4s .3s ease both',position:'relative'}}>
+          <div style={{position:'absolute',top:-20,left:'50%',transform:'translateX(-50%)',fontSize:26}}>💬</div>
+          <h2 style={{color:'#ffd700',fontWeight:900,fontSize:19,marginBottom:12,textAlign:'center'}}>
             {order.customer.name} wants:
           </h2>
-          <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          <div style={{display:'flex',flexDirection:'column',gap:8}}>
             {order.toppings.map(t=>(
-              <div key={t.id} style={{display:'flex',alignItems:'center',gap:12,background:'rgba(255,255,255,.08)',borderRadius:14,padding:'10px 14px'}}>
-                <span style={{fontSize:36,filter:'drop-shadow(0 2px 4px rgba(0,0,0,.4))'}}>{t.emoji}</span>
+              <div key={t.id} style={{display:'flex',alignItems:'center',gap:10,background:'rgba(255,255,255,.08)',borderRadius:12,padding:'9px 12px'}}>
+                <span style={{fontSize:32,filter:'drop-shadow(0 2px 4px rgba(0,0,0,.4))'}}>{t.emoji}</span>
                 <div>
-                  <div style={{color:'white',fontWeight:900,fontSize:20}}>
-                    <span className="fl" style={{fontSize:24}}>{t.name[0]}</span>{t.name.slice(1)}
+                  <div style={{color:'white',fontWeight:900,fontSize:18}}>
+                    <span className="fl" style={{fontSize:22}}>{t.name[0]}</span>{t.name.slice(1)}
                   </div>
-                  <div style={{color:'#ffd700',fontWeight:700,fontSize:17}}>
-                    ×{t.required} <span style={{opacity:.75}}>({NW[t.required]})</span>
-                  </div>
+                  <div style={{color:'#ffd700',fontWeight:700,fontSize:15}}>×{t.required} <span style={{opacity:.75}}>({NW[t.required]})</span></div>
                 </div>
               </div>
             ))}
-            <div style={{display:'flex',alignItems:'center',gap:12,background:'rgba(255,255,255,.08)',borderRadius:14,padding:'10px 14px'}}>
-              <span style={{fontSize:36}}>{order.drink.emoji}</span>
-              <div style={{color:'white',fontWeight:900,fontSize:20}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,background:'rgba(255,255,255,.08)',borderRadius:12,padding:'9px 12px'}}>
+              <span style={{fontSize:32}}>{order.drink.emoji}</span>
+              <div style={{color:'white',fontWeight:900,fontSize:18}}>
                 And a <span style={{color:'#4ecdc4'}}>{order.drink.name}</span>!
               </div>
             </div>
           </div>
         </div>
-        <button className="btn btn-r" onClick={()=>{ getAud(); setPhase(P.BUILD); }} style={{fontSize:22}}>
+        <button className="btn btn-r" onClick={()=>{ getAud(); setPhase(P.BUILD); }} style={{fontSize:20}}>
           Let&apos;s go! 🍕
         </button>
       </div>
     );
   }
 
-  // ── render: BUILD PIZZA ───────────────────────────────────────────────────
+  // ── BUILD PIZZA ───────────────────────────────────────────────────────────
   function renderBuild(){
     return (
-      <div style={{display:'flex',flexDirection:'column',gap:14}}>
-        <div className="glass" style={{padding:'14px 16px'}}>
-          <div style={{color:'#ffd700',fontWeight:900,fontSize:17,marginBottom:10}}>📋 Order</div>
-          {order.toppings.map(t=>{
-            const placed=pTops[t.id]||0, done=placed>=t.required, need=t.required-placed;
-            return (
-              <div key={t.id} style={{display:'flex',alignItems:'center',gap:10,background:done?'rgba(107,203,119,.18)':'rgba(255,255,255,.07)',border:`1px solid ${done?'#6bcb77':'rgba(255,255,255,.15)'}`,borderRadius:12,padding:'8px 12px',marginBottom:8}}>
-                <span style={{fontSize:26}}>{t.emoji}</span>
-                <div style={{flex:1}}>
-                  <span style={{color:'white',fontWeight:700,fontSize:15}}>
-                    <span className="fl">{t.name[0]}</span>{t.name.slice(1)} ×{t.required}
-                  </span>
-                  <div style={{color:done?'#6bcb77':'#ff9f43',fontWeight:700,fontSize:13}}>
-                    {done?'✅ Done!':`${placed} added – Need ${need} more (${NW[need]})`}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-          <div style={{color:'rgba(255,255,255,.7)',fontWeight:700,fontSize:14}}>
-            Toppings on pizza: <strong style={{color:'white'}}>{totalPiz}</strong>
-          </div>
-        </div>
-
-        <div style={{display:'flex',justifyContent:'center'}}>
-          <div ref={pizRef} style={{width:220,height:220,borderRadius:'50%',background:'radial-gradient(circle,#f8d04a 55%,#e09030 78%,#c47020 100%)',boxShadow:'0 6px 24px rgba(0,0,0,.5),inset 0 -6px 14px rgba(0,0,0,.25)',position:'relative',display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <div style={{position:'absolute',width:164,height:164,borderRadius:'50%',background:'radial-gradient(circle,#c0392b 50%,#922b21 100%)',pointerEvents:'none'}}/>
+      <div className="build-wrap">
+        {/* LEFT / PHONE-BOTTOM: pizza */}
+        <div className="build-pizza">
+          <div ref={pizRef} className="piz-sz" style={{borderRadius:'50%',background:'radial-gradient(circle,#f8d04a 55%,#e09030 78%,#c47020 100%)',boxShadow:'0 6px 24px rgba(0,0,0,.5),inset 0 -6px 14px rgba(0,0,0,.25)',position:'relative',display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <div style={{position:'absolute',width:'75%',height:'75%',borderRadius:'50%',background:'radial-gradient(circle,#c0392b 50%,#922b21 100%)',pointerEvents:'none'}}/>
             {Object.entries(pTops).map(([id,cnt])=>{
               const top=TOPPINGS.find(t=>t.id===id); if(!top) return null;
+              const isWrong=!orderedIds.has(id);
               return Array.from({length:cnt}).map((_,i)=>{
                 const pos=tPos(id,i,cnt);
                 return (
-                  <div key={`${id}-${i}`} onClick={()=>rmTop(id)} style={{position:'absolute',left:`calc(50% + ${pos.x}px)`,top:`calc(50% + ${pos.y}px)`,transform:'translate(-50%,-50%)',fontSize:22,filter:'drop-shadow(0 2px 3px rgba(0,0,0,.45))',cursor:'pointer',zIndex:2}}>
+                  <div key={`${id}-${i}`} style={{position:'absolute',left:`calc(50% + ${pos.x}px)`,top:`calc(50% + ${pos.y}px)`,transform:'translate(-50%,-50%)',fontSize:20,filter:isWrong?'drop-shadow(0 0 4px #ff4444)':'drop-shadow(0 2px 3px rgba(0,0,0,.45))',cursor:'pointer',zIndex:2,animation:wrongId===id?'wrongWiggle .4s ease':'none'}}>
                     {top.emoji}
+                    <div onClick={e=>{e.stopPropagation();rmTop(id);}} style={{position:'absolute',top:-7,right:-7,width:17,height:17,borderRadius:'50%',background:'#ff4444',border:'2px solid white',color:'white',fontSize:11,fontWeight:900,display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,cursor:'pointer',zIndex:3}}>−</div>
                   </div>
                 );
               });
             })}
           </div>
-        </div>
-        <p style={{textAlign:'center',color:'rgba(255,255,255,.5)',fontSize:13,margin:0}}>Tap to add • Tap topping on pizza to remove</p>
-
-        <div className="glass" style={{padding:'14px 16px',animation:'trayUp .5s ease'}}>
-          <div style={{color:'white',fontWeight:900,fontSize:17,marginBottom:12,textAlign:'center'}}>Choose Toppings</div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10}}>
-            {order.toppings.map(t=>(
-              <button key={t.id} className="ib" onClick={()=>addTop(t)} onPointerDown={e=>drag(e,t,pizRef,addTop)}>
-                <span style={{fontSize:36,filter:'drop-shadow(0 2px 3px rgba(0,0,0,.4))'}}>{t.emoji}</span>
-                <PName name={t.name}/>
-              </button>
-            ))}
+          <div style={{color:'rgba(255,255,255,.55)',fontSize:12,textAlign:'center'}}>Tap to add · tap − to remove</div>
+          <div style={{color:'rgba(255,255,255,.8)',fontWeight:700,fontSize:13}}>
+            Toppings on pizza: <strong style={{color:'white'}}>{totalPiz}</strong>
           </div>
         </div>
-        <button className="btn btn-r" onClick={()=>setPhase(P.BAKING)} style={{fontSize:20}}>Bake it! 🔥</button>
-      </div>
-    );
-  }
 
-  // ── render: BAKING ────────────────────────────────────────────────────────
-  function renderBaking(){
-    const isIn=bkPhase==='in', isBk=bkPhase==='baking', isOut=bkPhase==='out'||bkPhase==='done';
-    return (
-      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:20}}>
-        <h2 style={{color:'white',fontWeight:900,fontSize:26}}>Baking your pizza! 🔥</h2>
-        <div style={{width:280,height:320,background:'linear-gradient(180deg,#2e2e2e 0%,#1a1a1a 100%)',borderRadius:28,border:'6px solid #555',position:'relative',overflow:'hidden',animation:isBk?'oGlow 1.4s ease-in-out infinite':'none',boxShadow:isBk?'0 0 35px #ff8c00,0 0 70px #ff4500':'0 6px 24px rgba(0,0,0,.5)',display:'flex',flexDirection:'column',alignItems:'center',padding:'16px 18px 0'}}>
-          <div style={{width:'100%',height:28,background:'#3a3a3a',borderRadius:8,marginBottom:14,display:'flex',alignItems:'center',justifyContent:'space-around',padding:'0 20px'}}>
-            {['#ff4444','#ffaa00','#44dd44'].map((c,i)=>(
-              <div key={i} style={{width:13,height:13,borderRadius:'50%',background:isBk?c:'#555',boxShadow:isBk?`0 0 8px ${c}`:'none',transition:'all .3s'}}/>
-            ))}
-          </div>
-          <div style={{width:90,height:90,borderRadius:'50%',background:isBk?'radial-gradient(circle,#ffd700 30%,#ff8c00 100%)':'radial-gradient(circle,#555,#333)',border:'5px solid #888',marginBottom:12,animation:isBk?'wFlicker .45s ease-in-out infinite':'none',boxShadow:isBk?'inset 0 0 15px #ffd700,0 0 20px #ff8c00':'none'}}/>
-          <div style={{animation:isIn?'pIn .85s ease forwards':isOut?'pOut .85s ease forwards':'none',filter:isOut?'brightness(.88)':'none'}}>
-            <div style={{width:140,height:140,borderRadius:'50%',background:isOut?'radial-gradient(circle,#c49010 55%,#7a4010 78%,#5a2e0a 100%)':'radial-gradient(circle,#f8d04a 55%,#e09030 78%,#c47020 100%)',boxShadow:'0 4px 16px rgba(0,0,0,.45)',position:'relative',display:'flex',alignItems:'center',justifyContent:'center',animation:isBk?'haze .5s ease-in-out infinite':'none'}}>
-              <div style={{position:'absolute',width:104,height:104,borderRadius:'50%',background:'radial-gradient(circle,#c0392b 50%,#922b21 100%)'}}/>
-              {Object.entries(pTops).map(([id])=>{
-                const t=TOPPINGS.find(x=>x.id===id);
-                return t?<div key={id} style={{position:'absolute',fontSize:14,filter:'drop-shadow(0 2px 2px rgba(0,0,0,.5))',zIndex:2}}>{t.emoji}</div>:null;
-              })}
-            </div>
-          </div>
-          {isBk&&(
-            <div style={{position:'absolute',bottom:8,display:'flex',gap:8}}>
-              {[1,2,3,4,5].map(i=>(
-                <span key={i} style={{fontSize:26,display:'block',animation:`fl${((i-1)%3)+1} ${.28+i*.07}s ease-in-out infinite`,transformOrigin:'bottom center'}}>🔥</span>
-              ))}
-            </div>
-          )}
-        </div>
-        <div style={{width:280,height:14,background:'rgba(255,255,255,.18)',borderRadius:7,overflow:'hidden'}}>
-          <div style={{height:'100%',width:bkPct+'%',background:'linear-gradient(90deg,#ffd700,#ff8c00,#ff4500)',borderRadius:7,transition:'width .07s linear'}}/>
-        </div>
-        <p style={{color:'rgba(255,255,255,.6)',fontSize:14}}>{bkPct<100?'Baking…':'Done! ✅'}</p>
-      </div>
-    );
-  }
-
-  // ── render: BUILD DRINK ───────────────────────────────────────────────────
-  function renderDrink(){
-    const recipe=order.drink;
-    return (
-      <div style={{display:'flex',flexDirection:'column',gap:14}}>
-        <h2 style={{color:'white',fontWeight:900,fontSize:24,textAlign:'center'}}>Now make the drink! 🥤</h2>
-        <div className="glass" style={{padding:'14px 16px'}}>
-          <div style={{display:'flex',alignItems:'center',gap:12}}>
-            <span style={{fontSize:40}}>{recipe.emoji}</span>
-            <div>
-              <div style={{color:'white',fontWeight:900,fontSize:20}}>{recipe.name}</div>
-              {recipe.ingredients.map(ing=>{
-                const f=FRUITS.find(x=>x.id===ing.id), added=bFrts[ing.id]||0, done=added>=ing.count;
-                return (
-                  <div key={ing.id} style={{color:done?'#6bcb77':'#ffd700',fontWeight:700,fontSize:16}}>
-                    {f?.emoji} <span className="fl">{f?.name[0]}</span>{f?.name.slice(1)} ×{ing.count} ({NW[ing.count]})
-                    {done?' ✅':` – ${added} added`}
+        {/* RIGHT / PHONE-TOP: order + tray + button */}
+        <div className="build-side">
+          {/* Checklist */}
+          <div className="glass" style={{padding:'12px 14px'}}>
+            <div style={{color:'#ffd700',fontWeight:900,fontSize:15,marginBottom:8}}>📋 Order</div>
+            {order.toppings.map(t=>{
+              const placed=pTops[t.id]||0, done=placed===t.required, over=placed>t.required, need=t.required-placed;
+              const wrongPlaced=Object.entries(pTops).filter(([id])=>!orderedIds.has(id)).reduce((s,[,c])=>s+c,0);
+              return (
+                <div key={t.id} style={{display:'flex',alignItems:'center',gap:8,background:done?'rgba(107,203,119,.18)':over?'rgba(255,100,100,.15)':'rgba(255,255,255,.06)',border:`1px solid ${done?'#6bcb77':over?'#ff6464':'rgba(255,255,255,.12)'}`,borderRadius:10,padding:'7px 10px',marginBottom:6}}>
+                  <span style={{fontSize:22}}>{t.emoji}</span>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{color:'white',fontWeight:700,fontSize:13,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>
+                      <span className="fl">{t.name[0]}</span>{t.name.slice(1)} ×{t.required}
+                    </div>
+                    <div style={{color:done?'#6bcb77':over?'#ff8888':'#ff9f43',fontWeight:700,fontSize:12}}>
+                      {done?`✅ ${placed}/${t.required} Done!`:over?`⚠️ ${placed}/${t.required} Too many!`:`${placed}/${t.required} – need ${need} more`}
+                    </div>
                   </div>
+                </div>
+              );
+            })}
+            {/* Wrong toppings warning */}
+            {Object.entries(pTops).some(([id])=>!orderedIds.has(id))&&(
+              <div style={{color:'#ff8888',fontSize:12,fontWeight:700,marginTop:4}}>
+                ⚠️ Some toppings aren't in the order!
+              </div>
+            )}
+          </div>
+
+          {/* Topping tray – all 12 */}
+          <div className="glass" style={{padding:'10px 12px',animation:'trayUp .5s ease'}}>
+            <div style={{color:'white',fontWeight:900,fontSize:14,marginBottom:8,textAlign:'center'}}>
+              Choose Toppings <span style={{color:'#ffd700',fontSize:12}}>✨ = in order</span>
+            </div>
+            <div className="t-grid">
+              {TOPPINGS.map(t=>{
+                const isWanted=orderedIds.has(t.id);
+                const req=order.toppings.find(x=>x.id===t.id);
+                const placed=pTops[t.id]||0;
+                const met=req&&placed>=req.required;
+                return (
+                  <button key={t.id} className={`ib${isWanted?' ib-want':''}`}
+                    onClick={()=>addTop(t)}
+                    onPointerDown={e=>drag(e,t,pizRef,addTop)}>
+                    <span style={{fontSize:28,filter:'drop-shadow(0 2px 3px rgba(0,0,0,.4))',position:'relative'}}>
+                      {t.emoji}
+                      {met&&<span style={{position:'absolute',top:-6,right:-6,fontSize:12}}>✅</span>}
+                    </span>
+                    <PName name={t.name} small/>
+                    {isWanted&&<span style={{color:'#ffd700',fontSize:10,fontWeight:900}}>×{req.required}</span>}
+                  </button>
                 );
               })}
             </div>
           </div>
+
+          <button className="btn btn-r" onClick={()=>setPhase(P.BAKING)} style={{fontSize:18}}>Bake it! 🔥</button>
         </div>
-        <div style={{display:'flex',justifyContent:'center'}}>
-          <div ref={blnRef} style={{width:110,height:170,background:'rgba(255,255,255,.08)',border:'3px solid rgba(255,255,255,.25)',borderRadius:'12px 12px 28px 28px',position:'relative',overflow:'hidden',backdropFilter:'blur(6px)'}}>
-            <div style={{position:'absolute',bottom:0,left:0,right:0,height:blFill+'%',background:recipe.color,borderRadius:'0 0 25px 25px',transition:'height .35s ease',opacity:.85}}/>
-            <div style={{position:'absolute',top:6,left:0,right:0,display:'flex',flexWrap:'wrap',justifyContent:'center',gap:2,padding:4,zIndex:2}}>
-              {blFList.map((id,i)=>{ const f=FRUITS.find(x=>x.id===id); return <span key={i} style={{fontSize:16}}>{f?.emoji}</span>; })}
+      </div>
+    );
+  }
+
+  // ── BAKING ────────────────────────────────────────────────────────────────
+  function renderBaking(){
+    const isIn=bkPhase==='in', isBk=bkPhase==='baking', isOut=bkPhase==='out'||bkPhase==='done';
+    return (
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:16}}>
+        <h2 style={{color:'white',fontWeight:900,fontSize:24}}>Baking your pizza! 🔥</h2>
+        <div className="baking-wrap" style={{display:'flex',flexDirection:'column',alignItems:'center',gap:16}}>
+          <div style={{width:260,height:300,background:'linear-gradient(180deg,#2e2e2e 0%,#1a1a1a 100%)',borderRadius:28,border:'6px solid #555',position:'relative',overflow:'hidden',animation:isBk?'oGlow 1.4s ease-in-out infinite':'none',boxShadow:isBk?'0 0 35px #ff8c00,0 0 70px #ff4500':'0 6px 24px rgba(0,0,0,.5)',display:'flex',flexDirection:'column',alignItems:'center',padding:'14px 16px 0'}}>
+            <div style={{width:'100%',height:26,background:'#3a3a3a',borderRadius:8,marginBottom:12,display:'flex',alignItems:'center',justifyContent:'space-around',padding:'0 20px'}}>
+              {['#ff4444','#ffaa00','#44dd44'].map((c,i)=>(
+                <div key={i} style={{width:12,height:12,borderRadius:'50%',background:isBk?c:'#555',boxShadow:isBk?`0 0 8px ${c}`:'none',transition:'all .3s'}}/>
+              ))}
             </div>
-            {dropEm&&<div style={{position:'absolute',top:0,left:'50%',transform:'translateX(-50%)',fontSize:30,animation:'fDrop .5s ease forwards',zIndex:10}}>{dropEm}</div>}
+            <div style={{width:84,height:84,borderRadius:'50%',background:isBk?'radial-gradient(circle,#ffd700 30%,#ff8c00 100%)':'radial-gradient(circle,#555,#333)',border:'5px solid #888',marginBottom:10,animation:isBk?'wFlicker .45s ease-in-out infinite':'none',boxShadow:isBk?'inset 0 0 15px #ffd700,0 0 20px #ff8c00':'none'}}/>
+            <div style={{animation:isIn?'pIn .85s ease forwards':isOut?'pOut .85s ease forwards':'none',filter:isOut?'brightness(.88)':'none'}}>
+              <div style={{width:130,height:130,borderRadius:'50%',background:isOut?'radial-gradient(circle,#c49010 55%,#7a4010 78%,#5a2e0a 100%)':'radial-gradient(circle,#f8d04a 55%,#e09030 78%,#c47020 100%)',boxShadow:'0 4px 16px rgba(0,0,0,.45)',position:'relative',display:'flex',alignItems:'center',justifyContent:'center',animation:isBk?'haze .5s ease-in-out infinite':'none'}}>
+                <div style={{position:'absolute',width:'75%',height:'75%',borderRadius:'50%',background:'radial-gradient(circle,#c0392b 50%,#922b21 100%)'}}/>
+                {Object.entries(pTops).map(([id])=>{ const t=TOPPINGS.find(x=>x.id===id); return t?<div key={id} style={{position:'absolute',fontSize:12,filter:'drop-shadow(0 2px 2px rgba(0,0,0,.5))',zIndex:2}}>{t.emoji}</div>:null; })}
+              </div>
+            </div>
+            {isBk&&(<div style={{position:'absolute',bottom:6,display:'flex',gap:6}}>{[1,2,3,4,5].map(i=>(<span key={i} style={{fontSize:24,display:'block',animation:`fl${((i-1)%3)+1} ${.28+i*.07}s ease-in-out infinite`,transformOrigin:'bottom center'}}>🔥</span>))}</div>)}
+          </div>
+          <div style={{width:260}}>
+            <div style={{width:'100%',height:12,background:'rgba(255,255,255,.18)',borderRadius:6,overflow:'hidden'}}>
+              <div style={{height:'100%',width:bkPct+'%',background:'linear-gradient(90deg,#ffd700,#ff8c00,#ff4500)',borderRadius:6,transition:'width .07s linear'}}/>
+            </div>
+            <p style={{color:'rgba(255,255,255,.6)',fontSize:13,textAlign:'center',marginTop:6}}>{bkPct<100?'Baking…':'Done! ✅'}</p>
           </div>
         </div>
-        <div className="glass" style={{padding:'14px 16px',animation:'trayUp .5s ease'}}>
-          <div style={{color:'white',fontWeight:900,fontSize:17,marginBottom:12,textAlign:'center'}}>Choose Fruits</div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10}}>
-            {recipe.ingredients.map(ing=>{
-              const f=FRUITS.find(x=>x.id===ing.id); if(!f) return null;
+      </div>
+    );
+  }
+
+  // ── BUILD DRINK ───────────────────────────────────────────────────────────
+  function renderDrink(){
+    const recipe=order.drink;
+    return (
+      <div className="drink-wrap">
+        {/* LEFT / PHONE-BOTTOM: blender */}
+        <div className="drink-blender">
+          <div ref={blnRef} style={{width:100,height:156,background:'rgba(255,255,255,.08)',border:'3px solid rgba(255,255,255,.25)',borderRadius:'12px 12px 26px 26px',position:'relative',overflow:'hidden',backdropFilter:'blur(6px)'}}>
+            <div style={{position:'absolute',bottom:0,left:0,right:0,height:blFill+'%',background:recipe.color,borderRadius:'0 0 23px 23px',transition:'height .35s ease',opacity:.85}}/>
+            <div style={{position:'absolute',top:4,left:0,right:0,display:'flex',flexWrap:'wrap',justifyContent:'center',gap:2,padding:4,zIndex:2}}>
+              {blFList.map((id,i)=>{ const f=FRUITS.find(x=>x.id===id); return <span key={i} style={{fontSize:14}}>{f?.emoji}</span>; })}
+            </div>
+            {dropEm&&<div style={{position:'absolute',top:0,left:'50%',transform:'translateX(-50%)',fontSize:28,animation:'fDrop .5s ease forwards',zIndex:10}}>{dropEm}</div>}
+          </div>
+          {/* Fruits in blender with minus badges */}
+          <div style={{display:'flex',flexWrap:'wrap',gap:6,justifyContent:'center',maxWidth:160}}>
+            {Object.entries(bFrts).map(([id,cnt])=>{
+              const f=FRUITS.find(x=>x.id===id); if(!f) return null;
+              const isWrong=!drinkIds.has(id);
               return (
-                <button key={f.id} className="ib" onClick={()=>addFrt(f)} onPointerDown={e=>drag(e,f,blnRef,addFrt)}>
-                  <span style={{fontSize:36,filter:'drop-shadow(0 2px 3px rgba(0,0,0,.4))'}}>{f.emoji}</span>
-                  <PName name={f.name}/>
-                </button>
+                <div key={id} style={{background:isWrong?'rgba(255,80,80,.2)':'rgba(255,255,255,.1)',borderRadius:10,padding:'4px 8px',display:'flex',alignItems:'center',gap:4,border:`1px solid ${isWrong?'#ff6464':'rgba(255,255,255,.2)'}`}}>
+                  <span style={{fontSize:16}}>{f.emoji}</span>
+                  <span style={{color:'white',fontSize:12,fontWeight:700}}>×{cnt}</span>
+                  <button onClick={()=>rmFrt(id)} style={{background:'#ff4444',border:'2px solid white',borderRadius:'50%',width:16,height:16,color:'white',fontSize:10,fontWeight:900,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',padding:0,lineHeight:1}}>−</button>
+                </div>
               );
             })}
           </div>
+          <div style={{color:'rgba(255,255,255,.55)',fontSize:11,textAlign:'center'}}>Tap to add · tap − to remove</div>
         </div>
-        <button className="btn btn-p" onClick={()=>{ setPhase(P.BLENDING); doBlend(); }} style={{fontSize:20}}>Blend it! 🌀</button>
+
+        {/* RIGHT / PHONE-TOP: order + tray + button */}
+        <div className="drink-side">
+          <div className="glass" style={{padding:'12px 14px'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10}}>
+              <span style={{fontSize:34}}>{recipe.emoji}</span>
+              <div>
+                <div style={{color:'white',fontWeight:900,fontSize:17}}>{recipe.name}</div>
+                {recipe.ingredients.map(ing=>{
+                  const f=FRUITS.find(x=>x.id===ing.id), added=bFrts[ing.id]||0, done=added===ing.count, over=added>ing.count;
+                  return (
+                    <div key={ing.id} style={{color:done?'#6bcb77':over?'#ff8888':'#ffd700',fontWeight:700,fontSize:14}}>
+                      {f?.emoji} <span className="fl">{f?.name[0]}</span>{f?.name.slice(1)} ×{ing.count} — {added}/{ing.count}
+                      {done?' ✅':over?' ⚠️ Too many!':''}
+                    </div>
+                  );
+                })}
+                {Object.entries(bFrts).some(([id])=>!drinkIds.has(id))&&(
+                  <div style={{color:'#ff8888',fontSize:12,fontWeight:700,marginTop:2}}>⚠️ Extra fruits added!</div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Fruit tray – all 8 */}
+          <div className="glass" style={{padding:'10px 12px',animation:'trayUp .5s ease'}}>
+            <div style={{color:'white',fontWeight:900,fontSize:14,marginBottom:8,textAlign:'center'}}>
+              Choose Fruits <span style={{color:'#ffd700',fontSize:12}}>✨ = in recipe</span>
+            </div>
+            <div className="t-grid">
+              {FRUITS.map(f=>{
+                const isWanted=drinkIds.has(f.id);
+                const ing=recipe.ingredients.find(x=>x.id===f.id);
+                const added=bFrts[f.id]||0;
+                const met=ing&&added>=ing.count;
+                return (
+                  <button key={f.id} className={`ib${isWanted?' ib-want':''}`}
+                    onClick={()=>addFrt(f)}
+                    onPointerDown={e=>drag(e,f,blnRef,addFrt)}>
+                    <span style={{fontSize:28,filter:'drop-shadow(0 2px 3px rgba(0,0,0,.4))',position:'relative'}}>
+                      {f.emoji}
+                      {met&&<span style={{position:'absolute',top:-6,right:-6,fontSize:12}}>✅</span>}
+                    </span>
+                    <PName name={f.name} small/>
+                    {isWanted&&<span style={{color:'#ffd700',fontSize:10,fontWeight:900}}>×{ing.count}</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <button className="btn btn-p" onClick={()=>{ setPhase(P.BLENDING); doBlend(); }} style={{fontSize:18}}>Blend it! 🌀</button>
+        </div>
       </div>
     );
   }
 
-  // ── render: BLENDING ──────────────────────────────────────────────────────
+  // ── BLENDING ──────────────────────────────────────────────────────────────
   function renderBlending(){
     const recipe=order.drink, blending=blPhase==='blending', done=blPhase==='done';
     return (
-      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:20}}>
-        <h2 style={{color:'white',fontWeight:900,fontSize:26}}>{blending?'Blending! ⚡':done?'Ready! 🎉':''}</h2>
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:16}}>
+        <h2 style={{color:'white',fontWeight:900,fontSize:24}}>{blending?'Blending! ⚡':done?'Ready! 🎉':''}</h2>
         <div style={{position:'relative',display:'flex',flexDirection:'column',alignItems:'center',gap:8}}>
-          {blending&&<span style={{fontSize:28,zIndex:6}}>⚡</span>}
+          {blending&&<span style={{fontSize:26,zIndex:6}}>⚡</span>}
           {blending&&(
             <div style={{position:'absolute',top:'50%',left:'50%',width:0,height:0,zIndex:5}}>
-              <div style={{animation:'orbit 1s linear infinite',display:'inline-block',fontSize:26}}>🌀</div>
+              <div style={{animation:'orbit 1s linear infinite',display:'inline-block',fontSize:24}}>🌀</div>
             </div>
           )}
-          <div style={{width:110,height:170,background:'rgba(255,255,255,.08)',border:'3px solid rgba(255,255,255,.25)',borderRadius:'12px 12px 28px 28px',position:'relative',overflow:'hidden',animation:blending?'bShake .18s ease-in-out infinite':'none'}}>
-            <div style={{position:'absolute',bottom:0,left:0,right:0,height:Math.max(blFill,28)+'%',background:recipe.color,opacity:.85,animation:blending?'lChurn .3s ease-in-out infinite':'none',borderRadius:blending?undefined:'0 0 25px 25px'}}/>
+          <div style={{width:100,height:156,background:'rgba(255,255,255,.08)',border:'3px solid rgba(255,255,255,.25)',borderRadius:'12px 12px 26px 26px',position:'relative',overflow:'hidden',animation:blending?'bShake .18s ease-in-out infinite':'none'}}>
+            <div style={{position:'absolute',bottom:0,left:0,right:0,height:Math.max(blFill,26)+'%',background:recipe.color,opacity:.85,animation:blending?'lChurn .3s ease-in-out infinite':'none',borderRadius:blending?undefined:'0 0 23px 23px'}}/>
           </div>
         </div>
         {done&&(
-          <div style={{animation:'dSlide .5s ease',display:'flex',alignItems:'center',gap:16,background:'rgba(255,255,255,.1)',borderRadius:20,padding:'14px 22px',border:'2px solid rgba(255,255,255,.2)'}}>
-            <div style={{position:'relative',width:58,height:80}}>
-              <div style={{width:58,height:72,background:recipe.color,borderRadius:'8px 8px 18px 18px',border:'3px solid rgba(255,255,255,.3)',overflow:'hidden',position:'relative'}}>
-                <div style={{position:'absolute',top:6,left:6,width:10,height:32,background:'rgba(255,255,255,.35)',borderRadius:6,transform:'rotate(-15deg)'}}/>
+          <div style={{animation:'dSlide .5s ease',display:'flex',alignItems:'center',gap:14,background:'rgba(255,255,255,.1)',borderRadius:18,padding:'12px 20px',border:'2px solid rgba(255,255,255,.2)'}}>
+            <div style={{position:'relative',width:54,height:74}}>
+              <div style={{width:54,height:68,background:recipe.color,borderRadius:'8px 8px 16px 16px',border:'3px solid rgba(255,255,255,.3)',overflow:'hidden',position:'relative'}}>
+                <div style={{position:'absolute',top:5,left:5,width:9,height:28,background:'rgba(255,255,255,.35)',borderRadius:5,transform:'rotate(-15deg)'}}/>
               </div>
-              <div style={{position:'absolute',top:-10,right:12,width:5,height:44,background:'rgba(255,255,255,.7)',borderRadius:3}}/>
+              <div style={{position:'absolute',top:-9,right:11,width:4,height:40,background:'rgba(255,255,255,.7)',borderRadius:3}}/>
             </div>
-            <div style={{color:'white',fontWeight:900,fontSize:20}}>{recipe.name} ready! 🎊</div>
+            <div style={{color:'white',fontWeight:900,fontSize:18}}>{recipe.name} ready! 🎊</div>
           </div>
         )}
-        {done&&<button className="btn btn-g" onClick={serve} style={{fontSize:20}}>Serve it! 🍽️</button>}
+        {done&&<button className="btn btn-g" onClick={serve} style={{fontSize:18,maxWidth:320}}>Serve it! 🍽️</button>}
       </div>
     );
   }
 
-  // ── render: RESULT ────────────────────────────────────────────────────────
+  // ── RESULT ────────────────────────────────────────────────────────────────
   function renderResult(){
     if(!result) return null;
     const perfect=result.total>=4;
     const parts=order.toppings.map(t=>pTops[t.id]||0);
     const sum=parts.reduce((a,b)=>a+b,0);
     return (
-      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:20}}>
+      <div className="narrow" style={{display:'flex',flexDirection:'column',alignItems:'center',gap:16}}>
         {perfect&&(
           <>
-            <div style={{position:'fixed',top:'50%',left:'50%',transform:'translate(-50%,-50%)',width:340,height:340,borderRadius:'50%',background:'radial-gradient(circle,rgba(255,215,0,.35),transparent)',animation:'radPulse 1.5s ease-in-out infinite',pointerEvents:'none',zIndex:5}}/>
-            <div style={{animation:'banner .65s ease both',fontSize:28,fontWeight:900,color:'#ffd700',padding:'14px 24px',background:'rgba(0,0,0,.55)',borderRadius:20,border:'3px solid #ffd700',boxShadow:'0 0 32px rgba(255,215,0,.55)',textAlign:'center',zIndex:10,position:'relative'}}>
+            <div style={{position:'fixed',top:'50%',left:'50%',transform:'translate(-50%,-50%)',width:320,height:320,borderRadius:'50%',background:'radial-gradient(circle,rgba(255,215,0,.35),transparent)',animation:'radPulse 1.5s ease-in-out infinite',pointerEvents:'none',zIndex:5}}/>
+            <div style={{animation:'banner .65s ease both',fontSize:26,fontWeight:900,color:'#ffd700',padding:'12px 22px',background:'rgba(0,0,0,.55)',borderRadius:18,border:'3px solid #ffd700',boxShadow:'0 0 32px rgba(255,215,0,.55)',textAlign:'center',zIndex:10,position:'relative'}}>
               🕺 AMAZING! 🕺
             </div>
           </>
         )}
-        <div style={{fontSize:88,animation:perfect?'dance .55s ease-in-out infinite':'bob 3s ease-in-out infinite'}}>
+        <div style={{fontSize:80,animation:perfect?'dance .55s ease-in-out infinite':'bob 3s ease-in-out infinite'}}>
           {order.customer.emoji}
         </div>
-        <div style={{display:'flex',gap:14,justifyContent:'center'}}>
+        <div style={{display:'flex',gap:12,justifyContent:'center'}}>
           {[1,2,3,4].map(i=>(
-            <div key={i} style={{fontSize:40,opacity:result.total>=i?1:.2,animation:result.total>=i?`sPop .4s ${i*.15}s ease both`:'none'}}>⭐</div>
+            <div key={i} style={{fontSize:38,opacity:result.total>=i?1:.2,animation:result.total>=i?`sPop .4s ${i*.15}s ease both`:'none'}}>⭐</div>
           ))}
         </div>
-        <div className="glass" style={{padding:'16px 18px',width:'100%'}}>
-          <div style={{color:'#ffd700',fontWeight:900,fontSize:18,marginBottom:10,textAlign:'center'}}>🧮 Maths time!</div>
-          <div style={{color:'white',fontWeight:900,fontSize:22,textAlign:'center',marginBottom:8}}>
+        <div className="glass" style={{padding:'14px 16px',width:'100%'}}>
+          <div style={{color:'#ffd700',fontWeight:900,fontSize:16,marginBottom:8,textAlign:'center'}}>🧮 Maths time!</div>
+          <div style={{color:'white',fontWeight:900,fontSize:20,textAlign:'center',marginBottom:6}}>
             {parts.join(' + ')} = {sum} topping{sum!==1?'s':''}! 🍕
           </div>
-          <div style={{color:result.db?'#6bcb77':'#ff6b6b',fontWeight:700,fontSize:17,textAlign:'center'}}>
+          <div style={{color:result.db?'#6bcb77':'#ff6b6b',fontWeight:700,fontSize:15,textAlign:'center'}}>
             {result.db?'🥤 Perfect drink! +1 ⭐':"🥤 Drink wasn't quite right"}
           </div>
         </div>
-        <button className="btn btn-r" onClick={newRound} style={{fontSize:20}}>Next Customer! 👋</button>
+        <button className="btn btn-r" onClick={newRound} style={{fontSize:18}}>Next Customer! 👋</button>
       </div>
     );
   }
 
   return (
-    <div className="pg" style={{minHeight:'100vh',background:'radial-gradient(ellipse at 40% 30%,#1a0a2e 0%,#0d1b4b 100%)',display:'flex',flexDirection:'column',alignItems:'center',padding:'12px 16px 32px',userSelect:'none',WebkitUserSelect:'none'}}>
+    <div className="pg" style={{minHeight:'100dvh',background:'radial-gradient(ellipse at 40% 30%,#1a0a2e 0%,#0d1b4b 100%)',display:'flex',flexDirection:'column',alignItems:'center',padding:'10px 14px 24px',userSelect:'none',WebkitUserSelect:'none'}}>
       <style>{CSS}</style>
       {confetti.length>0&&(
         <div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:50}}>
@@ -527,11 +655,11 @@ export default function PizzaGame() {
           ))}
         </div>
       )}
-      <header style={{width:'100%',maxWidth:600,display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}}>
-        <div className="glass" style={{padding:'10px 18px'}}><span style={{color:'white',fontWeight:900,fontSize:20}}>🍕 Pizza Palace</span></div>
-        <div className="glass" style={{padding:'10px 18px'}}><span style={{color:'#ffd700',fontWeight:900,fontSize:20}}>⭐ {score}</span></div>
+      <header style={{width:'100%',display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+        <div className="glass" style={{padding:'8px 16px'}}><span style={{color:'white',fontWeight:900,fontSize:18}}>🍕 Pizza Palace</span></div>
+        <div className="glass" style={{padding:'8px 16px'}}><span style={{color:'#ffd700',fontWeight:900,fontSize:18}}>⭐ {score}</span></div>
       </header>
-      <main style={{width:'100%',maxWidth:600,flex:1}}>
+      <main style={{width:'100%',flex:1,overflow:'auto'}}>
         {phase===P.ORDER    && renderOrder()}
         {phase===P.BUILD    && renderBuild()}
         {phase===P.BAKING   && renderBaking()}
